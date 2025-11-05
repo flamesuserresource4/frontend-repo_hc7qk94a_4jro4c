@@ -1,28 +1,60 @@
-import { useState } from 'react'
+import { useMemo, useState } from "react";
+import Navbar from "./components/Navbar";
+import HeroSection from "./components/HeroSection";
+import SubmitPlaylist from "./components/SubmitPlaylist";
+import PlaylistGrid from "./components/PlaylistGrid";
 
-function App() {
-  const [count, setCount] = useState(0)
+const initialPlaylists = [
+  {
+    id: "p1",
+    title: "Sunrise Motivation",
+    url: "https://open.spotify.com/playlist/37i9dQZF1DX1g0iEXLFycr",
+    mood: "Hype",
+    genre: "Pop",
+    author: "Ava",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "p2",
+    title: "Late Night Lo‑Fi",
+    url: "https://open.spotify.com/playlist/37i9dQZF1DX2m5cVnMXKBL",
+    mood: "Chill",
+    genre: "Indie",
+    author: "Max",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "p3",
+    title: "Deep Focus Sessions",
+    url: "https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ",
+    mood: "Focus",
+    genre: "Electronic",
+    author: "Lena",
+    createdAt: new Date().toISOString(),
+  },
+];
+
+export default function App() {
+  const [playlists, setPlaylists] = useState(initialPlaylists);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const sortedPlaylists = useMemo(() => {
+    return [...playlists].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }, [playlists]);
+
+  function handleAdd(newItem) {
+    setPlaylists((prev) => [newItem, ...prev]);
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Vibe Coding Platform
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Your AI-powered development environment
-        </p>
-        <div className="text-center">
-          <button
-            onClick={() => setCount(count + 1)}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-          >
-            Count is {count}
-          </button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-white dark:bg-zinc-950">
+      <Navbar />
+      <HeroSection onSearchChange={setSearchTerm} />
+      <SubmitPlaylist onAdd={handleAdd} />
+      <PlaylistGrid playlists={sortedPlaylists} searchTerm={searchTerm} />
+      <footer className="mx-auto max-w-6xl px-4 py-10 text-center text-sm text-zinc-500">
+        Built with love by your community. This is a visual prototype — sign up and social features coming next.
+      </footer>
     </div>
-  )
+  );
 }
-
-export default App
